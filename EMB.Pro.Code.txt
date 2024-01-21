@@ -1,0 +1,108 @@
+void servo_rotate(int pulse_width);
+void interrupt (void);
+void PWM(unsigned int p, unsigned int d);
+void PWM1(unsigned int p, unsigned int d);
+void PWMdelay(unsigned int d, unsigned int speed);
+void mymsdelay(unsigned int d);
+void delay_2s();
+
+
+
+
+void main()
+{
+    unsigned int speed = 50;
+    INTCON = INTCON | 0x90;
+    OPTION_REG = OPTION_REG & 0xBF;
+    TRISD = 0x00;
+    TRISC = 0X00;
+    PORTC =0x00;
+    TRISB = 0x01;
+    PORTB = 0x00;
+    while (1)
+    {
+             PWM(10, speed);
+    }
+}
+
+void interrupt (void)
+{
+    unsigned int speed1 = 70;
+    PORTD = 0x00;
+    delay_ms(2000);
+    PWMdelay(150,speed1);
+    servo_rotate(400);
+    INTCON = INTCON & 0xFD;
+}
+
+
+void PWM(unsigned int p, unsigned int d) {
+    unsigned int period = p;
+    unsigned int duty = (d * p) / 100;
+
+    unsigned int i;
+    for (i = 0; i < period; i++) {
+        if (i < duty) {
+            PORTD = 0x05;
+        } else {
+            PORTD = 0x00;
+        }
+        delay_ms(1);
+    }
+}
+
+void PWM1(unsigned int p, unsigned int d) {
+    unsigned int period = p;
+    unsigned int duty = (d * p) / 100;
+
+    unsigned int i;
+    for (i = 0; i < period; i++) {
+        if (i < duty) {
+            PORTD = 0x05;
+        } else {
+            PORTD = 0x00;
+        }
+        delay_ms(1);
+    }
+}
+
+void servo_rotate(int pulse_width)
+{
+    unsigned int i;
+    unsigned int x;
+
+    for (i = 0; i < pulse_width; i++)
+    {
+        PORTC = 0x01;
+        delay_ms(1);
+        PORTC = 0x00;
+        delay_ms(19);
+    }
+}
+
+void PWMdelay(unsigned int d, unsigned int speed){
+unsigned int cntr=0;
+while(cntr < d){
+PWM1(10,speed);
+
+   cntr++;
+}
+}
+
+void mymsdelay(unsigned int d) {
+    unsigned int cntr = 0;
+        while (cntr < d) {
+        cntr=cntr;
+            cntr++;
+        }
+}
+ void delay_2s() {
+    unsigned int i, j;
+
+
+    for (i = 0; i < 2000; i++) {
+        for (j = 0; j < 100; j++) {
+           asm{NOP};
+        }
+    }
+}
